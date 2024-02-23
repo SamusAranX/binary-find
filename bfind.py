@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import sys
 from glob import glob
 from os.path import join, isfile, isdir, abspath
 
@@ -18,19 +19,19 @@ def main(args):
 		else:
 			header_bytes = args.header.encode("ascii")
 	except UnicodeEncodeError:
-		print("Invalid header string")
-		raise
+		print("Invalid header string", file=sys.stderr)
+		sys.exit(1)
 	except ValueError:
-		print("Invalid hex header string")
-		raise
+		print("Invalid hex header string", file=sys.stderr)
+		sys.exit(1)
 
 	byte_num = len(header_bytes)
 	if args.recursive:
-		print("Recursively l", end="")
+		print("Recursively l", end="", file=sys.stderr)
 	else:
-		print("L", end="")
+		print("L", end="", file=sys.stderr)
 
-	print(f"ooking for {byte_num} bytes: {header_bytes}")
+	print(f"ooking for {byte_num} bytes: {header_bytes}", file=sys.stderr)
 
 	for fp in args.input:
 		fp = abspath(fp)
@@ -40,7 +41,7 @@ def main(args):
 			file_list = glob(join(fp, "**", "*"), recursive=args.recursive, include_hidden=True)
 			file_list = filter(lambda file: isfile(file), file_list)
 		else:
-			print(f"Cannot resolve {fp}")
+			print(f"Cannot resolve {fp}", file=sys.stderr)
 			continue
 
 		for f in file_list:
